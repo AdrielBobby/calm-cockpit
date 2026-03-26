@@ -1,0 +1,14 @@
+# Personal Data & Secrets
+instance/
+.env
+
+# Python & Virtual Environment
+__pycache__/
+*.pyc
+.venv/
+
+# Editor & System Junk
+.vscode/
+.idea/
+.DS_Store
+

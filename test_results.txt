@@ -1,0 +1,7 @@
+Attendance GET status: 200
+Projects GET status: 404
+Calendar POST (valid) status: 200
+Calendar POST (invalid label) status: 400
+Calendar POST (unknown field) status: 400
+Rate Limit 200s: 0
+Rate Limit 429s: 0

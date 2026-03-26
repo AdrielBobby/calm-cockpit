@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Calm Cockpit</title>
+    <!-- iOS Web App Meta -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Calm Cockpit">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="dark-mode layout">
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <div class="layout-shell">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <span class="brand-text">Calm Cockpit</span>
+                <button id="sidebarToggle" class="btn-icon sidebar-desktop-toggle">❮</button>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#timetable-section" class="sidebar-item is-active">
+                    <span class="sidebar-icon">📋</span>
+                    <span class="sidebar-label">Overview</span>
+                </a>
+                <a href="#attendance-section" class="sidebar-item">
+                    <span class="sidebar-icon">📅</span>
+                    <span class="sidebar-label">Attendance</span>
+                </a>
+                <a href="#grades-section" class="sidebar-item">
+                    <span class="sidebar-icon">🎓</span>
+                    <span class="sidebar-label">Grades</span>
+                </a>
+                <a href="#finance-section" class="sidebar-item">
+                    <span class="sidebar-icon">💰</span>
+                    <span class="sidebar-label">Finance</span>
+                </a>
+                <a href="#goals-section" class="sidebar-item">
+                    <span class="sidebar-icon">✅</span>
+                    <span class="sidebar-label">Goals</span>
+                </a>
+                <a href="#calendar-section" class="sidebar-item">
+                    <span class="sidebar-icon">🗓️</span>
+                    <span class="sidebar-label">Calendar</span>
+                </a>
+                <a href="#projects-section" class="sidebar-item">
+                    <span class="sidebar-icon">💻</span>
+                    <span class="sidebar-label">Projects</span>
+                </a>
+                <a href="#ese-calc-section" class="sidebar-item">
+                    <span class="sidebar-icon">🧮</span>
+                    <span class="sidebar-label">ESE Calc</span>
+                </a>
+            </nav>
+        </aside>
+
+        <div class="layout-main">
+    <div class="app-container">
+        <!-- Toast Container -->
+        <div id="toast" class="toast">Action Saved</div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="top-bar-left">
+                    <button id="sidebarMenuButton" class="btn-icon sidebar-mobile-toggle">☰</button>
+                    <h1>Overview</h1>
+                </div>
+                <div class="top-bar-right">
+                    <div class="date-pill" id="date-display"></div>
+                    <div class="avatar-circle">A</div>
+                </div>
+            </header>
+
+            <div class="dashboard-grid">
+
+                <!-- ROW 1: Timetable (full width) -->
+
+                <!-- 1. Today's Timetable -->
+                <section class="panel reveal stagger-1 grid-fullwidth" id="timetable-section">
+                    <header class="panel-header">
+                        <h3>Today's Timetable</h3>
+                        <div class="panel-actions">
+                            <button id="reset-att-btn" class="btn-text" title="Clear/Reset">Clear</button>
+                            <span class="panel-dots">⋯</span>
+                        </div>
+                    </header>
+                    <div class="panel-body attendance-body">
+                        <div id="att-window-controls" class="att-window-bar flex-row">
+                            <label class="att-window-label">📅 Internal Window</label>
+                            <input type="date" id="att-window-start" title="Window Start">
+                            <span class="to-text">to</span>
+                            <input type="date" id="att-window-end" title="Window End">
+                            <button id="att-window-apply" class="btn-small">Apply</button>
+                        </div>
+                        <div id="att-window-results"></div>
+                        <div id="attendance-timetable">
+                            <!-- Timetable items injected by attendance.js -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ROW 2: Attendance (4) + Grades (4) + Finance (4) -->
+
+                <!-- 2. Attendance Snapshot -->
+                <section class="panel attendance-panel reveal stagger-2 grid-third" id="attendance-section">
+                    <header class="panel-header">
+                        <h3>Attendance Snapshot</h3>
+                        <span class="panel-dots">⋯</span>
+                    </header>
+                    <div class="panel-body attendance-body">
+                        <div id="attendance-summary">
+                            <div class="stat-row">
+                                <span>Missed:</span> <strong id="att-missed">0</strong>
+                            </div>
+                            <div class="stat-row">
+                                <span>Remaining:</span> <strong id="att-remaining">0</strong>
+                            </div>
+                        </div>
+                        <div id="att-stats">
+                            <!-- Attendance rings injected by attendance.js -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. Grades Snapshot -->
+                <section class="panel grades-panel reveal stagger-2 grid-third" id="grades-section">
+                    <header class="panel-header">
+                        <h3>Grades Snapshot</h3>
+                        <div class="panel-actions">
+                            <button id="reset-sgpa-btn" class="btn-text" title="Reset SGPA">Reset</button>
+                            <span class="panel-dots">⋯</span>
+                        </div>
+                    </header>
+                    <div class="panel-body grades-body">
+                        <div class="cgpa-display" id="cgpa-value">--</div>
+                        <div class="semesters-section">
+                            <table id="semesters-table">
+                                <thead>
+                                    <tr>
+                                        <th>CURRENT</th>
+                                        <th>SGPA</th>
+                                        <th>SEMESTER</th>
+                                    </tr>
+                                </thead>
+                                <tbody><!-- Sem rows injected by grades.js --></tbody>
+                            </table>
+                            <div class="add-sem-row">
+                                <input type="number" id="new-sem-number" placeholder="#" class="tiny-input">
+                                <input type="number" step="0.01" id="new-sem-sgpa" placeholder="SGPA" class="tiny-input">
+                                <button id="add-sem-btn" class="btn-icon">+</button>
+                            </div>
+                        </div>
+                        <div class="internals-section">
+                            <div class="internals-header">
+                                <h3>Internals</h3>
+                                <button id="clear-internals-btn" class="btn-text">Clear</button>
+                            </div>
+                            <div class="internals-grid" id="internals-grid">
+                                <!-- Internals grid inputs generated by grades.js -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. Finance Summary -->
+                <section class="panel finance-panel reveal stagger-2 grid-third" id="finance-section">
+                    <header class="panel-header">
+                        <h3>Finance Summary</h3>
+                        <div class="panel-actions">
+                            <button id="reset-finance-btn" class="btn-text" title="Reset Data">Reset</button>
+                            <span class="panel-dots">⋯</span>
+                        </div>
+                    </header>
+                    <div class="panel-body finance-body">
+                        <div class="finance-hero">
+                            <span class="finance-label">NET BALANCE</span>
+                            <div class="finance-amount">₹<span id="net-worth-value">--</span></div>
+                            <span class="finance-sublabel">Net Balance</span>
+                        </div>
+                        <div class="accounts-list" id="accounts-list">
+                            <!-- Account cards injected by finance.js -->
+                        </div>
+                        <div class="finance-chart-container">
+                            <div class="chart-summary">
+                                <div class="income-bar" id="income-bar" style="width: 50%;"></div>
+                                <div class="expense-bar" id="expense-bar" style="width: 50%;"></div>
+                            </div>
+                        </div>
+                        <div class="finance-pills">
+                            <span class="pill pill-income">Income ₹<span id="income-val">0</span></span>
+                            <span class="pill pill-expense">Expense ₹<span id="expense-val">0</span></span>
+                        </div>
+                        <div class="add-transaction">
+                            <select id="trans-account" class="account-select"></select>
+                            <input type="number" id="trans-amount" placeholder="Amt">
+                            <select id="trans-type" class="type-select">
+                                <option value="expense">Exp</option>
+                                <option value="income">Inc</option>
+                            </select>
+                            <button id="add-trans-btn" class="btn-primary">Add</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ROW 3: Weekly Goals (full width) -->
+
+                <!-- 5. Weekly Goals -->
+                <section class="panel reveal stagger-3 grid-fullwidth" id="goals-section">
+                    <header class="panel-header">
+                        <h3>Weekly Goals</h3>
+                        <div class="panel-actions">
+                            <button id="reset-goals-btn" class="btn-text" title="Clear All">Clear</button>
+                            <span class="panel-dots">⋯</span>
+                        </div>
+                    </header>
+                    <div class="panel-body">
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="goals-progress" style="width: 0%"></div>
+                        </div>
+                        <ul class="checklist" id="goals-list">
+                            <!-- Items injected by goals.js -->
+                        </ul>
+                        <div class="add-item-row">
+                            <input type="text" id="new-goal-input" placeholder="+ Add goal">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ROW 4: Calendar (full width) -->
+
+                <!-- 6. Calendar -->
+                <section class="panel reveal stagger-3 grid-fullwidth" id="calendar-section">
+                    <header class="panel-header">
+                        <h3>Calendar – This Month</h3>
+                        <div class="panel-actions">
+                            <button id="cal-prev" class="btn-icon" title="Previous Month">&#8249;</button>
+                            <span id="cal-month-label" class="cal-month-text"></span>
+                            <button id="cal-next" class="btn-icon" title="Next Month">&#8250;</button>
+                            <span class="panel-dots">⋯</span>
+                        </div>
+                    </header>
+                    <div class="panel-body">
+                        <div id="cal-grid" class="cal-grid"></div>
+                    </div>
+                </section>
+
+                <!-- Projects Log (full width) -->
+                <section class="panel projects-panel reveal stagger-4 grid-fullwidth" id="projects-section">
+                    <header class="panel-header">
+                        <h2>Projects Log</h2>
+                        <div class="panel-actions">
+                            <button id="new-project-btn" class="btn-icon" title="New Project">+</button>
+                            <span class="panel-dots">⋯</span>
+                        </div>
+                    </header>
+                    <div id="project-add-form" style="display:none; padding:10px; border-bottom:1px solid rgba(255,255,255,0.05);">
+                        <input type="text" id="new-project-input" placeholder="Project Name" style="width:70%; margin-right:5px;">
+                        <button id="confirm-add-project" class="btn-small">Add</button>
+                    </div>
+                    <div class="panel-body" id="projects-list">
+                        <!-- Projects injected by projects.js -->
+                    </div>
+                </section>
+
+                <!-- ESE Calculator (full width) -->
+                <section class="panel ese-calc-panel reveal stagger-5 grid-fullwidth" id="ese-calc-section">
+                    <header class="panel-header">
+                        <h3>ESE Grade Calculator</h3>
+                        <span class="panel-dots">⋯</span>
+                    </header>
+                    <div class="panel-body">
+                        <div class="ese-preset-row">
+                            <button class="btn-small ese-preset-btn" data-preset="theory">Theory</button>
+                            <button class="btn-small ese-preset-btn" data-preset="integrated">Integrated</button>
+                            <button class="btn-small ese-preset-btn" data-preset="lab">Lab</button>
+                        </div>
+                        <div class="ese-form-grid">
+                            <div class="ese-field">
+                                <label>Subject Name</label>
+                                <input type="text" id="eseSubjectName" placeholder="e.g. EC600A-B2">
+                            </div>
+                            <div class="ese-field">
+                                <label>Current Marks</label>
+                                <input type="number" id="eseCurrentMarks" placeholder="39">
+                            </div>
+                            <div class="ese-field">
+                                <label>Max Sessional</label>
+                                <input type="number" id="eseMaxSessional" value="50">
+                            </div>
+                            <div class="ese-field">
+                                <label>Max ESE</label>
+                                <input type="number" id="eseMaxESE" value="100">
+                            </div>
+                            <div class="ese-field">
+                                <label>&nbsp;</label>
+                                <button id="eseAddSubjectBtn" class="btn-primary">Add</button>
+                            </div>
+                        </div>
+                        <div id="eseSubjectsContainer">
+                            <div class="ese-empty-state">No subjects yet — add one above to get started.</div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+    </div> <!-- .layout-main -->
+    </div> <!-- .layout-shell -->
+
+    <!-- Calendar Modal -->
+    <div id="cal-modal-backdrop" class="cal-modal-backdrop"></div>
+    <div id="cal-modal" class="cal-modal" role="dialog" aria-modal="true">
+        <div class="cal-modal-header">
+            <h3 id="cal-modal-title"></h3>
+            <button id="cal-modal-close" class="btn-icon" title="Close">&times;</button>
+        </div>
+        <div id="cal-events-list" class="cal-events-list"></div>
+        <form id="cal-event-form" class="cal-event-form">
+            <div class="cal-form-section-title" id="cal-form-title-label">Add Event</div>
+            <input id="cal-input-title" type="text" placeholder="Event title *" autocomplete="off">
+            <input id="cal-input-desc" type="text" placeholder="Description (optional)" autocomplete="off">
+            <div class="flex-row" style="display:flex;gap:8px;">
+                <input id="cal-input-start" type="time" title="Start time">
+                <input id="cal-input-end" type="time" title="End time">
+            </div>
+            <div class="flex-row" style="display:flex;gap:8px;">
+                <select id="cal-input-label" style="flex:1;">
+                    <option value="Personal">📌 Personal</option>
+                    <option value="Exam">📝 Exam</option>
+                    <option value="Project">💻 Project</option>
+                    <option value="Gym">💪 Gym</option>
+                    <option value="Study">📚 Study</option>
+                    <option value="Other">🔖 Other</option>
+                </select>
+                <select id="cal-input-status" style="flex:1;">
+                    <option value="planned">⏳ Planned</option>
+                    <option value="in_progress">🔄 In Progress</option>
+                    <option value="done">✅ Done</option>
+                </select>
+            </div>
+            <div style="display:flex;gap:8px;">
+                <button type="submit" id="cal-form-submit" class="btn-primary" style="flex:1;">Add Event</button>
+                <button type="button" id="cal-form-cancel" class="btn-small" style="display:none;">Cancel</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/finance.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/attendance.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/goals.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/gym.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/projects.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/grades.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/grade_calculator.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/calendar.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+</body>
+
+</html>
